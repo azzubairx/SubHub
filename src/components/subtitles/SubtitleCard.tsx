@@ -1,9 +1,31 @@
 import React from 'react';
-import { Download, Heart, FileText, CheckCircle } from 'lucide-react';
+import { Download, Heart } from 'lucide-react';
 import { ISubtitle } from '../../types';
 import { motion } from 'framer-motion';
+import { useAppStore } from '../../store/useAppStore';
 
 export const SubtitleCard = ({ subtitle }: { subtitle: ISubtitle }) => {
+  const { favorites, toggleFavorite } = useAppStore();
+  const isFavorite = favorites.some(f => f.id === subtitle.id);
+
+  const handleDownload = () => {
+    if (subtitle.subtitleUrl && subtitle.subtitleUrl !== '#') {
+      const link = document.createElement('a');
+      link.href = subtitle.subtitleUrl;
+      link.download = `${subtitle.title}.${subtitle.fileType}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert('رابط التحميل غير متاح حالياً');
+    }
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(subtitle);
+  };
+
   return (
     <motion.div 
       layout
@@ -27,7 +49,7 @@ export const SubtitleCard = ({ subtitle }: { subtitle: ISubtitle }) => {
 
       <div className="flex flex-wrap gap-2 mt-auto">
         <span className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-600 dark:text-slate-300">
-          <FileText className="w-3 h-3" /> {subtitle.fileType.toUpperCase()}
+          {subtitle.fileType.toUpperCase()}
         </span>
         <span className="flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-slate-600 dark:text-slate-300">
           {subtitle.language}
@@ -37,14 +59,29 @@ export const SubtitleCard = ({ subtitle }: { subtitle: ISubtitle }) => {
             <Download className="w-3 h-3" /> {subtitle.downloads}
           </span>
         )}
+        {subtitle.matchScore !== undefined && (
+          <span className="flex items-center gap-1 text-xs bg-green-100 dark:bg-green-500/20 px-2 py-1 rounded-md text-green-700 dark:text-green-300 font-semibold">
+            تطابق: {subtitle.matchScore}%
+          </span>
+        )}
       </div>
 
       <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 mt-2">
-        <button className="flex-1 flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+        <button 
+          onClick={handleDownload}
+          className="flex-1 flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium transition-colors"
+        >
           <Download className="w-4 h-4" /> تنزيل
         </button>
-        <button className="p-2 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-500">
-          <Heart className="w-4 h-4" />
+        <button 
+          onClick={handleToggleFavorite}
+          className={`p-2 border rounded-lg transition-colors ${
+            isFavorite 
+              ? 'bg-red-50 dark:bg-red-500/20 border-red-300 dark:border-red-600' 
+              : 'border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
         </button>
       </div>
     </motion.div>

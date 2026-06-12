@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Film, Tv, Settings2 } from 'lucide-react';
+import { Search, Settings2 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { motion } from 'framer-motion';
 
@@ -11,8 +11,8 @@ export const HeroSearch = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query) return;
-    performSearch({ query, language: 'Arabic', fileName });
+    if (!query.trim()) return;
+    performSearch({ query: query.trim(), language: 'Arabic', fileName: fileName.trim() || undefined });
   };
 
   return (
@@ -26,10 +26,10 @@ export const HeroSearch = () => {
         className="z-10 w-full max-w-4xl text-center"
       >
         <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
-          Sub<span className="text-indigo-400">Nirvana</span>
+          Sub<span className="text-indigo-400">Hub</span>
         </h1>
         <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-          محرك بحث شامل للترجمات. يبحث في أكثر من 10 مصادر مختلفة ليعطيك أفضل تطابق لفيلمك أو مسلسلك.
+          محرك بحث شامل للترجمات. يبحث في مصادر متعددة ليعطيك أفضل تطابق لفيلمك أو مسلسلك.
         </p>
 
         <form onSubmit={handleSearch} className="relative w-full max-w-3xl mx-auto flex flex-col gap-4">
@@ -45,8 +45,8 @@ export const HeroSearch = () => {
             />
             <button 
               type="submit" 
-              disabled={isLoading}
-              className="absolute right-2 h-12 px-6 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition-colors disabled:opacity-50"
+              disabled={isLoading || !query.trim()}
+              className="absolute right-2 h-12 px-6 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'جاري البحث...' : 'ابحث'}
             </button>
@@ -60,7 +60,7 @@ export const HeroSearch = () => {
               placeholder="اسم الملف للبحث عن تطابق دقيق (اختياري)..."
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
               dir="ltr"
             />
           </div>
