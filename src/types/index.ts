@@ -6,7 +6,7 @@ export interface ISubtitle {
   episode?: number;
   year?: number;
   language: string;
-  source: string; // e.g., 'OpenSubtitles', 'Subscene'
+  source: string;
   releaseName: string;
   fileType: 'srt' | 'vtt' | 'ass' | 'zip';
   downloads: number;
